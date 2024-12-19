@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Your custom styles here */
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -18,4 +19,67 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+@keyframes sway {
+  0% {
+    transform: rotate(-5deg);
+  }
+  100% {
+    transform: rotate(5deg);
+  }
+}
+
+.animate-sway {
+  animation: sway 2s ease-in-out infinite alternate;
+}
+
+@keyframes float-across-1 {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100vw); }
+}
+
+@keyframes float-across-2 {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100vw); }
+}
+
+@keyframes float-across-3 {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100vw); }
+}
+
+@keyframes float-across-4 {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100vw); }
+}
+
+@keyframes float-across-5 {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100vw); }
+}
+
+.animate-cloud-1 {
+  animation: float-across-1 120s linear infinite;
+  animation-delay: -10s;
+}
+
+.animate-cloud-2 {
+  animation: float-across-2 150s linear infinite;
+  animation-delay: -45s;
+}
+
+.animate-cloud-3 {
+  animation: float-across-3 180s linear infinite;
+  animation-delay: -20s;
+}
+
+.animate-cloud-4 {
+  animation: float-across-4 160s linear infinite;
+  animation-delay: -60s;
+}
+
+.animate-cloud-5 {
+  animation: float-across-5 140s linear infinite;
+  animation-delay: -30s;
 }
