@@ -1,10 +1,8 @@
-'use client';
-
-import { AuthProvider } from '@/contexts/AuthContext';
-import { GameProvider } from '@/contexts/GameContext';
+import { Metadata } from 'next';
+import RootLayoutClient from './layout.client';
 import "./globals.css";
 
-// You can keep the font imports if you want to use them
+// You can keep the font imports
 import localFont from "next/font/local";
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -17,22 +15,20 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-// Remove metadata since we're using 'use client'
-// If you need metadata, create a separate layout file for it
+export const metadata: Metadata = {
+  title: 'Virtual Pet App',
+  description: 'A virtual pet application',
+};
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <AuthProvider>
-          <GameProvider>
-            {children}
-          </GameProvider>
-        </AuthProvider>
+        <RootLayoutClient>{children}</RootLayoutClient>
       </body>
     </html>
   );

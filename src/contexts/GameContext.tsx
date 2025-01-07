@@ -5,6 +5,7 @@ import { User } from 'firebase/auth';
 import { useAuth } from './AuthContext';
 import { calculateDecayedStats } from '@/lib/petUtils';
 import { getUserData, saveUserData, resetUserData } from '@/lib/firebase';
+import { incrementDeathCount, incrementInteraction } from '@/lib/metricsActions';
 
 interface Age {
   days: number;
@@ -321,6 +322,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     await saveUserData(user.uid, userData);
     setHunger(100);
     setLastSaved(now);
+
+    await incrementInteraction(user.uid, 'feed');
   };
 
   const playWithPet = async () => {
@@ -345,6 +348,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     await saveUserData(user.uid, userData);
     setHappiness(100);
     setLastSaved(now);
+
+    await incrementInteraction(user.uid, 'play');
   };
 
   const healPet = async () => {
@@ -369,6 +374,8 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     await saveUserData(user.uid, userData);
     setHealth(100);
     setLastSaved(now);
+
+    await incrementInteraction(user.uid, 'heal');
   };
 
   const resetGame = async () => {
@@ -449,6 +456,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       setLastSaved(now);
 
       if (baseData.isDead) {
+        incrementDeathCount(user.uid).catch(console.error);
         clearInterval(interval);
       }
     }, 1000);

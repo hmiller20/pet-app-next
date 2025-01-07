@@ -3,7 +3,10 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useGame } from '@/contexts/GameContext';
 import { useRouter } from 'next/navigation';
-import { useMemo } from 'react';
+import { useMemo, useEffect, useState } from 'react';
+import { getUserSurveyStatus } from '@/lib/firebase';
+import { ref, onValue } from 'firebase/database';
+import { database } from '@/lib/firebase';
 
 function Cloud({ className = "", index = 0 }: { className?: string; index?: number }) {
   // Memoize all random values
@@ -98,8 +101,31 @@ function GrassBackground() {
 export default function MenuPage() {
   const { logOut } = useAuth();
   const router = useRouter();
-  const { petName } = useGame();
+  const { petName, isDead } = useGame();
+  const [hasSurvey, setHasSurvey] = useState(false);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (!user || isDead) {
+      setHasSurvey(false);
+      return;
+    }
+    
+    console.log('Setting up real-time listener for survey status');
+    const surveyStatusRef = ref(database, `users/${user.uid}/surveyStatus`);
+    
+    const unsubscribe = onValue(surveyStatusRef, (snapshot) => {
+      const status = snapshot.val();
+      // Simply trust the hasAvailableSurvey flag - the backend is responsible for its accuracy
+      setHasSurvey(status?.hasAvailableSurvey ?? false);
+    });
   
+    return () => {
+      console.log('Cleaning up survey status listener');
+      unsubscribe();
+    };
+  }, [user, isDead]);
+
   const handleLogOut = async () => {
     await logOut();
     router.push('/login');
@@ -136,6 +162,16 @@ export default function MenuPage() {
           >
             Log Out
           </button>
+          
+          {hasSurvey && (
+            <button 
+              onClick={() => router.push('/survey')}
+              className="w-full py-4 px-6 bg-purple-500 hover:bg-purple-600 text-white rounded-2xl font-semibold transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-md border-b-4 border-purple-600 hover:border-purple-700 relative"
+            >
+              <span className="absolute top-0 right-0 transform -translate-y-1/2 translate-x-1/2 w-3 h-3 bg-red-500 rounded-full" />
+              Daily Survey Available!
+            </button>
+          )}
         </div>
       </div>
     </div>

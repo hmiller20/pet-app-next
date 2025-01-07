@@ -1,0 +1,147 @@
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".read": "$uid === auth.uid",
+        ".write": "$uid === auth.uid",
+        
+        ".validate": "newData.hasChildren(['petType', 'hunger', 'happiness', 'health', 'lastSaved', 'birthDate', 'isAdult', 'lastInteraction']) || (!data.exists())",
+        
+        "petType": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        },
+        "petName": {
+          ".validate": "!newData.exists() || (newData.isString() && newData.val().length > 0 && newData.val().length <= 20)"
+        },
+        "hunger": {
+          ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
+        },
+        "happiness": {
+          ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
+        },
+        "health": {
+          ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
+        },
+        "lastSaved": {
+          ".validate": "newData.isNumber() && newData.val() <= now"
+        },
+        "birthDate": {
+          ".validate": "newData.isNumber() && newData.val() <= now"
+        },
+        "isAdult": {
+          ".validate": "newData.isBoolean()"
+        },
+        "lastInteraction": {
+          ".validate": "newData.isNumber() && newData.val() <= now"
+        },
+        
+        "interactions": {
+          "$interactionId": {
+            ".validate": "newData.hasChildren(['timestamp', 'type', 'statsBefore', 'statsAfter'])",
+            "timestamp": {
+              ".validate": "newData.isNumber() && newData.val() <= now"
+            },
+            "type": {
+              ".validate": "newData.isString() && newData.val().matches(/^(feed|play|heal)$/)"
+            },
+            "statsBefore": {
+              ".validate": "newData.hasChildren(['hunger', 'happiness', 'health'])",
+              "hunger": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100" },
+              "happiness": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100" },
+              "health": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100" }
+            },
+            "statsAfter": {
+              ".validate": "newData.hasChildren(['hunger', 'happiness', 'health'])",
+              "hunger": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100" },
+              "happiness": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100" },
+              "health": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100" }
+            }
+          }
+        },
+        
+        "surveyStatus": {
+          ".read": "$uid === auth.uid",
+          ".write": "$uid === auth.uid || auth.token.admin === true",
+          ".validate": "newData.hasChildren(['userId', 'lastSurveyDate', 'nextSurveyAvailable', 'hasAvailableSurvey'])",
+          "userId": {
+            ".validate": "newData.val() === $uid"
+          },
+          "lastSurveyDate": {
+            ".validate": "newData.isNumber() && newData.val() <= now"
+          },
+          "nextSurveyAvailable": {
+            ".validate": "newData.isNumber()"
+          },
+          "hasAvailableSurvey": {
+            ".validate": "newData.isBoolean()"
+          }
+        },
+        
+        "surveyResponses": {
+          ".read": "$uid === auth.uid",
+          ".write": "$uid === auth.uid",
+          "$responseId": {
+            ".validate": "newData.hasChildren(['surveyId', 'timestamp', 'responses', 'completionTime'])",
+            "surveyId": {
+              ".validate": "newData.isString()"
+            },
+            "timestamp": {
+              ".validate": "newData.isNumber() && newData.val() <= now"
+            },
+            "responses": {
+              "$response": {
+                ".validate": "newData.hasChildren(['questionId', 'answer'])",
+                "questionId": {
+                  ".validate": "newData.isString()"
+                },
+                "answer": {
+                  ".validate": "newData.isString() || newData.isNumber()"
+                }
+              }
+            },
+            "completionTime": {
+              ".validate": "newData.isNumber() && newData.val() <= now"
+            }
+          }
+        }
+      }
+    },
+    
+    "surveyTemplates": {
+      ".read": "auth != null",
+      ".write": "auth.token.admin === true",
+      "$templateId": {
+        ".validate": "newData.hasChildren(['id', 'title', 'version', 'questions'])",
+        "id": {
+          ".validate": "newData.isString() && newData.val() === $templateId"
+        },
+        "title": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        },
+        "version": {
+          ".validate": "newData.isNumber() && newData.val() > 0"
+        },
+        "questions": {
+          "$question": {
+            ".validate": "newData.hasChildren(['id', 'text', 'type', 'required'])",
+            "id": {
+              ".validate": "newData.isString()"
+            },
+            "text": {
+              ".validate": "newData.isString() && newData.val().length > 0"
+            },
+            "type": {
+              ".validate": "newData.isString() && newData.val().matches(/^(likert|text|multipleChoice)$/)"
+            },
+            "required": {
+              ".validate": "newData.isBoolean()"
+            },
+            "options": {
+              ".validate": "!newData.exists() || newData.hasChildren()"
+            }
+          }
+        }
+      }
+    }
+  }
+} 

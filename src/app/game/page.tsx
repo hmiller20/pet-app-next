@@ -7,6 +7,7 @@ import PetAnimation from '@/components/animations/PetAnimation';
 import { DeathModal, Tombstone } from '@/components/GameComponents';
 import { Cloud, CloudBackground, GrassBackground } from '@/components/backgrounds';
 import { InfoModal } from '@/components/InfoModal';
+import { useAuth } from '@/contexts/AuthContext';
 
 function StatMeter({ label, value, isDead, type }: {
   label: string;
@@ -115,6 +116,8 @@ export default function GamePage() {
     resetGame,
     isLoading
   } = useGame();
+  const { user } = useAuth();
+  console.log('Current user ID:', user?.uid);
 
   useEffect(() => {
     if (!isLoading && (!petType || !petName)) {
