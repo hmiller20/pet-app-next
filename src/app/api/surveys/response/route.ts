@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
-import { getMetrics } from '@/lib/metricsService';
+import { submitSurveyResponse } from '@/lib/surveyService';
 import { adminAuth } from '@/lib/firebase-admin';
 
-export async function GET(request: Request) {
+export async function POST(request: Request) {
   try {
     // Get Firebase token from Authorization header
     const authHeader = request.headers.get('Authorization');
@@ -19,15 +19,28 @@ export async function GET(request: Request) {
     const decodedToken = await adminAuth.verifyIdToken(token);
     console.log('Token verified, userId:', decodedToken.uid);
     
-    const userId = decodedToken.uid;
-    const metrics = await getMetrics(userId);
-    console.log('Metrics retrieved:', metrics);
-    
-    return NextResponse.json(metrics || { message: 'No metrics found' });
+    const body = await request.json();
+    const { surveyId, responses, completionTime } = body;
+
+    if (!surveyId || !responses || !completionTime) {
+      return NextResponse.json(
+        { error: 'Missing required fields' },
+        { status: 400 }
+      );
+    }
+
+    const response = await submitSurveyResponse(
+      decodedToken.uid,
+      surveyId,
+      responses,
+      completionTime
+    );
+
+    return NextResponse.json(response);
   } catch (error) {
-    console.error('Detailed error in metrics route:', error);
+    console.error('Error submitting survey response:', error);
     return NextResponse.json(
-      { error: 'Internal server error', details: error instanceof Error ? error.message : 'Unknown error' },
+      { error: 'Failed to submit survey response', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }

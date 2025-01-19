@@ -236,4 +236,4 @@ const nextConfig = {
 - Validate accessibility compliance
 - Use React Testing Library
 
-Remember: Prioritize clarity and maintainability while delivering robust, accessible, and performant solutions aligned with the latest React 18, Next.js 15, and Vercel AI SDK features and best practices.
+Remember: Prioritize clarity and maintainability while delivering robust, accessible, and performant solutions aligned with the latest React 18, Next.js 15, and Vercel AI SDK features and best practices. Every component should include a comment in the line above the component describing the basic function of the component.

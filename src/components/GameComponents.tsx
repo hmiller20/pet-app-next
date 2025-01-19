@@ -15,7 +15,7 @@ export const DeathModal = ({ petName, onReset }: { petName: string, onReset: () 
 );
 
 export const Tombstone = ({ petName }: { petName: string }) => (
-  <div className="flex flex-col items-center justify-end h-full">
+  <div className="flex flex-col items-center">
     <div className="w-48 h-56 relative flex items-center justify-center">
       {/* Tombstone shape */}
       <div className="absolute inset-0 bg-gray-300 rounded-t-3xl" />

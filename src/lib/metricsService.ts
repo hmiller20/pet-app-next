@@ -1,12 +1,12 @@
 'use server';
 
-import { connectToDatabase } from './mongodb';
+import dbConnect from '@/src/lib/mongodb';
 import { PetMetrics } from '../models/PetMetrics';
 
 export async function incrementDeathCount(userId: string) {
   if (typeof window !== 'undefined') return;
   
-  await connectToDatabase();
+  await dbConnect();
   
   await PetMetrics.findOneAndUpdate(
     { userId },
@@ -21,7 +21,7 @@ export async function incrementDeathCount(userId: string) {
 export async function incrementInteraction(userId: string, type: 'feed' | 'play' | 'heal') {
   if (typeof window !== 'undefined') return;
   
-  await connectToDatabase();
+  await dbConnect();
   
   const update = {
     [`interactions.${type}`]: 1
@@ -40,7 +40,7 @@ export async function incrementInteraction(userId: string, type: 'feed' | 'play'
 export async function getMetrics(userId: string) {
   if (typeof window !== 'undefined') return null;
   
-  await connectToDatabase();
+  await dbConnect();
   
   const metrics = await PetMetrics.findOne({ userId });
   return metrics || null;
@@ -53,7 +53,7 @@ export async function addCustomMetric(
 ) {
   if (typeof window !== 'undefined') return;
   
-  await connectToDatabase();
+  await dbConnect();
   
   await PetMetrics.findOneAndUpdate(
     { userId },

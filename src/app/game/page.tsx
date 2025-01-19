@@ -232,7 +232,7 @@ export default function GamePage() {
           <div className="flex-1 flex items-end justify-center">
             <div className="w-[min(384px,50vw)] h-[min(384px,50vh)] relative mb-0">
               {isDead ? (
-                <div className="absolute bottom-[12vh] left-1/2 -translate-x-1/2">
+                <div className="absolute bottom-[min(96px,12vh)] left-1/2 -translate-x-1/2">
                   <Tombstone petName={petName} />
                 </div>
               ) : (
